@@ -159,7 +159,8 @@ static FlutterError *getFlutterError(NSError *error) {
 }
 
 - (void)didReceiveRemoteNotification:(NSDictionary *)userInfo {
-    if (_resumingFromBackground) {
+    // This works for when App in foreground and tap on notificaton from notification center
+    if (_resumingFromBackground || [UIApplication sharedApplication].applicationState == UIApplicationStateInactive) {
         [_channel invokeMethod:@"onResume" arguments:userInfo];
     } else {
         [_channel invokeMethod:@"onMessage" arguments:userInfo];
@@ -183,7 +184,7 @@ static FlutterError *getFlutterError(NSError *error) {
 didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     if (launchOptions != nil) {
         _launchNotification = launchOptions[UIApplicationLaunchOptionsRemoteNotificationKey];
-    }
+    }    
     return YES;
 }
 
